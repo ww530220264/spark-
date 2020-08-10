@@ -1,6 +1,6 @@
 package com.ww.kafka
 
-object KafkaConsumer {
+object MyConsumer {
   def main(args: Array[String]): Unit = {
 
   }
