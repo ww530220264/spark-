@@ -1,6 +1,6 @@
-package com.ww.examples.streaming
+package com.ww.spark.streaming
 
-import com.ww.examples.SparkUtils
+import com.ww.spark.SparkUtils
 import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.{Seconds, State, StateSpec, StreamingContext}
 

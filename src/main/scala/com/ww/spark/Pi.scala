@@ -1,4 +1,4 @@
-package com.ww.examples
+package com.ww.spark
 
 import scala.math.random
 

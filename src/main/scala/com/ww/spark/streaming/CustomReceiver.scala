@@ -1,10 +1,10 @@
-package com.ww.examples.streaming
+package com.ww.spark.streaming
 
 import java.io.{BufferedReader, InputStreamReader}
 import java.net.Socket
 import java.nio.charset.StandardCharsets
 
-import com.ww.examples.SparkUtils
+import com.ww.spark.SparkUtils
 import org.apache.spark.internal.Logging
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.{Seconds, StreamingContext}

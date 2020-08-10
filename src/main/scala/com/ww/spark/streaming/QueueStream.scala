@@ -1,6 +1,6 @@
 package com.ww.examples.streaming
 
-import com.ww.examples.SparkUtils
+import com.ww.spark.SparkUtils
 import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 
