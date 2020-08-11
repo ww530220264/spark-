@@ -11,9 +11,11 @@ object SparkUtils {
   def getSparkConf(appName: String): SparkConf = new SparkConf()
     .setAppName(appName)
     .setMaster("yarn")
+    // JVM退出时,优雅关闭driver // ssc.start时已经注册了关闭钩子,因此只需要设置此参数即可
+    .set("spark.streaming.stopGracefullyOnShutdown", "true")
     .set("yarn.resourcemanager.hostname", "cdh1")
     .set("spark.execurot.instance", "2")
-    .set("spark.executor.cores","2")
+    .set("spark.executor.cores", "2")
     .set("spark.executor.memory", "512M")
     .set("spark.yarn.queue", "spark")
     .set("spark.driver.host", "192.168.10.107")
@@ -21,7 +23,11 @@ object SparkUtils {
     .setJars(List("C:\\workspace\\cdh\\target\\original-cdh-1.0-SNAPSHOT.jar"))
 
 
-  def getSparkSession(sparkConf: SparkConf): SparkSession = SparkSession.builder().config(sparkConf).getOrCreate()
+  def getSparkSession(sparkConf: SparkConf): SparkSession = SparkSession
+    .builder()
+    .config(sparkConf)
+    .enableHiveSupport()
+    .getOrCreate()
 
   def setLogLevel(level: String): Unit = {
 
