@@ -102,8 +102,8 @@ object PageViewGenerator {
           while (true) {
             try {
               Thread.sleep(sleepDelayMs)
-            }catch {
-              case _ => println("..............")
+            } catch {
+              case _: Throwable => println("..............")
             }
             out.write(getNextClickEvent())
             out.flush()

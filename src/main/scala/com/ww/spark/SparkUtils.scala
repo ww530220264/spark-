@@ -18,7 +18,7 @@ object SparkUtils {
     .set("spark.executor.cores", "2")
     .set("spark.executor.memory", "512M")
     .set("spark.yarn.queue", "spark")
-    .set("spark.driver.host", "192.168.10.107")
+    .set("spark.driver.host", "192.168.10.106")
     .set("spark.yarn.archive", "hdfs://nameservice-HA-hdfs/user/spark/jars/spark-libs.jar")
     .setJars(List("C:\\workspace\\cdh\\target\\original-cdh-1.0-SNAPSHOT.jar"))
 
