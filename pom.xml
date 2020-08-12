@@ -81,12 +81,12 @@
 
     <dependencies>
         <!-- scala -->
-        <!--        <dependency>-->
-        <!--            <groupId>org.scala-lang</groupId>-->
-        <!--            <artifactId>scala-library</artifactId>-->
-        <!--            <version>2.11.12</version>-->
-        <!--            <scope>${provided.scope}</scope>-->
-        <!--        </dependency>-->
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>2.11.12</version>
+            <scope>${provided.scope}</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-core_2.11</artifactId>
