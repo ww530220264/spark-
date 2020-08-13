@@ -30,22 +30,26 @@ object NetworkWordCountStructedStreaming {
   def joinStringWindowWithWatermark(spark: SparkSession): Unit = {
     import spark.implicits._
     var df1 = spark.readStream.format("socket").option("host", "192.168.10.151").option("port", 9999).load()
-    df1 = df1.as[String].filter(_.length > 1).map(_.split("\\W+")).map(x => (new Timestamp(x(0).toLong), x(1), x(2))).toDF("timestamp1", "key1", "value1")
+    df1 = df1.as[String].map(_.split("\\W+")).filter(_.length >= 3).map(x => (new Timestamp(x(0).toLong), x(1), x(2))).toDF("timestamp1", "key1", "value1")
     var df2 = spark.readStream.format("socket").option("host", "192.168.10.151").option("port", 9998).load()
-    df2 = df2.as[String].filter(_.length > 1).map(_.split("\\W+")).map(x => (new Timestamp(x(0).toLong), x(1), x(2))).toDF("timestamp2", "key2", "value2")
+    df2 = df2.as[String].map(_.split("\\W+")).filter(_.length >= 3).map(x => (new Timestamp(x(0).toLong), x(1), x(2))).toDF("timestamp2", "key2", "value2")
     df1 = df1.withWatermark("timestamp1", "5 seconds")
     df2 = df2.withWatermark("timestamp2", "8 seconds")
     import org.apache.spark.sql.functions.expr
+    // spark.sql.streaming.multipleWatermarkPolicy=max/min
+    // 默认为min,,两个流中较小的watermark作为全局watermark,防止当一个流比另一个流慢的时候,慢的流中的元素被drop
     val resultDF = df1.join(df2, expr(
       """
         key1 = key2 AND
         timestamp1 >= timestamp2 AND
         timestamp1 <= timestamp2 + interval 3 second
         """))
+    import scala.concurrent.duration._
     val query = resultDF
       .writeStream
       .option("truncate", false)
       .format("console")
+      .trigger(Trigger.ProcessingTime(3.seconds))
       .outputMode(OutputMode.Append()) // 两个流Join只支持Append模式
       .start()
 
@@ -73,7 +77,8 @@ object NetworkWordCountStructedStreaming {
       .format("console")
       //      .outputMode("complete")
       // 当有窗口被触发时,才会输出触发的窗口聚合结果,会考虑延迟到达的数据,超过延迟时间之后到达的数据,对应的窗口已经被触发,不会再处理这个数据
-      .outputMode("append").trigger(Trigger.ProcessingTime(3.seconds))
+      .outputMode("append")
+      .trigger(Trigger.ProcessingTime(3.seconds))
       // 输出新增或更新的窗口的聚合数据,会考虑延迟到达的数据,超过延迟时间之后到达的数据,对应的窗口已经被触发,不会再处理这个数据
       //      .outputMode("update")
       .start()
