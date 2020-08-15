@@ -1,11 +1,9 @@
 package com.ww.spark.streaming.kafka
 
-import java.util.Properties
 
 import com.ww.spark.SparkUtils
-import org.apache.hadoop.util.ShutdownHookManager
 import org.apache.kafka.clients.consumer.ConsumerConfig
-import org.apache.kafka.common.serialization.{StringDeserializer, StringSerializer}
+import org.apache.kafka.common.serialization.{StringDeserializer}
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.streaming.kafka010.{CanCommitOffsets, ConsumerStrategies, HasOffsetRanges, KafkaUtils, LocationStrategies, OffsetRange}

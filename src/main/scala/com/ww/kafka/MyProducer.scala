@@ -19,39 +19,25 @@ object MyProducer {
   config.put(ProducerConfig.RETRIES_CONFIG, Int.MaxValue.toString)
 
   def main(args: Array[String]): Unit = {
-//    val user_id = Random.nextInt(20000) + 1
-//    val order_id = Random.nextInt(10000000)
-//    val categroy_id = Random.nextInt(100) + 1
-//    val product_id = Random.nextInt(10000) + 1
-//    val product_num = Random.nextInt(10) + 1
-//    val amount = Random.nextInt(5000) / 10.0
-//    val value = s"{'user_id':${user_id},'order_id':${order_id},'categroy_id':${categroy_id},'product_id':${product_id},'product_num':${product_num},'amount':${amount}}"
-//    println(value)
-        send_async()
+    //    val user_id = Random.nextInt(20000) + 1
+    //    val order_id = Random.nextInt(10000000)
+    //    val categroy_id = Random.nextInt(100) + 1
+    //    val product_id = Random.nextInt(10000) + 1
+    //    val product_num = Random.nextInt(10) + 1
+    //    val amount = Random.nextInt(5000) / 10.0
+    //    val value = s"{'user_id':${user_id},'order_id':${order_id},'categroy_id':${categroy_id},'product_id':${product_id},'product_num':${product_num},'amount':${amount}}"
+    //    println(value)
+    send_async()
   }
 
   def send_async(): Unit = {
-    System.err.println(111)
-    new Thread(new Runnable {
-      override def run(): Unit = {
-        runProducer()
-      }
-    }).start()
-    new Thread(new Runnable {
-      override def run(): Unit = {
-        runProducer()
-      }
-    }).start()
-    new Thread(new Runnable {
-      override def run(): Unit = {
-        runProducer()
-      }
-    }).start()
-    new Thread(new Runnable {
-      override def run(): Unit = {
-        runProducer()
-      }
-    }).start()
+    for (i <- 1 to 4) {
+      new Thread(new Runnable {
+        override def run(): Unit = {
+          runProducer()
+        }
+      }).start()
+    }
 
     val a = System.in.read()
     if (a == 49) {
@@ -73,8 +59,7 @@ object MyProducer {
         val amount = Random.nextInt(5000) / 10.0
         val value = s"{'user_id':${user_id},'order_id':${order_id},'categroy_id':${categroy_id},'product_id':${product_id},'product_num':${product_num},'amount':${amount}}"
         producer.send(new ProducerRecord[String, String]("user_order", value), new ProducerCallback())
-        System.err.println(value)
-        Thread.sleep(Random.nextInt(5))
+        Thread.sleep(Random.nextInt(250))
       }
     } catch {
       case ex: Exception => {
