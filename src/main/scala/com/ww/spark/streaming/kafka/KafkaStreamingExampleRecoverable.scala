@@ -3,6 +3,7 @@ package com.ww.spark.streaming.kafka
 import com.ww.spark.SparkUtils
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
+import org.apache.spark.sql.SparkSession
 import org.apache.spark.streaming.kafka010.{CanCommitOffsets, ConsumerStrategies, HasOffsetRanges, KafkaUtils, LocationStrategies, OffsetRange}
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 
@@ -16,7 +17,7 @@ object KafkaStreamingExampleRecoverable {
       ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG -> classOf[StringDeserializer].getName,
       ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG -> classOf[StringDeserializer].getName,
       ConsumerConfig.GROUP_ID_CONFIG -> "KafkaStreamingExampleRecoverable_1",
-      ConsumerConfig.AUTO_OFFSET_RESET_CONFIG -> "latest",
+      ConsumerConfig.AUTO_OFFSET_RESET_CONFIG -> "earliest",
       ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG -> "false"
     )
     val checkpointDir = "./KafkaStreamingExampleRecoverable"
@@ -44,15 +45,10 @@ object KafkaStreamingExampleRecoverable {
     })
 
     kafkaStreams.map(_.value()).foreachRDD(rdd => {
-      val spark = SparkUtils.getSparkSession(rdd.sparkContext.getConf)
+      val spark = SparkSession.builder.config(rdd.sparkContext.getConf).getOrCreate()
       import spark.implicits._
       val df = spark.read.json(spark.createDataset(rdd))
-      df.select("*").show()
-
-      if (scala.util.Random.nextInt(5) == 2) {
-        1 / 0
-      }
-
+      df.show()
       kafkaStreams.asInstanceOf[CanCommitOffsets].commitAsync(A.get("rdd").getOrElse(new Array[OffsetRange](0)))
     })
 

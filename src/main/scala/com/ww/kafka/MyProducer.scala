@@ -2,9 +2,16 @@ package com.ww.kafka
 
 import java.util.Properties
 
+import com.ww.hbase.HbaseUtils
+import org.apache.hadoop.hbase.TableName
+import org.apache.hadoop.hbase.client.Put
+import org.apache.hadoop.hbase.util.Bytes
+
 import scala.util.Random
 import org.apache.kafka.clients.producer.{Callback, KafkaProducer, ProducerConfig, ProducerRecord, RecordMetadata}
 import org.apache.kafka.common.serialization.StringSerializer
+
+import scala.util.parsing.json.JSON
 
 object MyProducer {
 
@@ -28,10 +35,11 @@ object MyProducer {
     //    val value = s"{'user_id':${user_id},'order_id':${order_id},'categroy_id':${categroy_id},'product_id':${product_id},'product_num':${product_num},'amount':${amount}}"
     //    println(value)
     send_async()
+//        testJson()
   }
 
   def send_async(): Unit = {
-    for (i <- 1 to 4) {
+    for (i <- 1 to 5) {
       new Thread(new Runnable {
         override def run(): Unit = {
           runProducer()
@@ -57,9 +65,11 @@ object MyProducer {
         val product_id = Random.nextInt(10000) + 1
         val product_num = Random.nextInt(10) + 1
         val amount = Random.nextInt(5000) / 10.0
-        val value = s"{'user_id':${user_id},'order_id':${order_id},'categroy_id':${categroy_id},'product_id':${product_id},'product_num':${product_num},'amount':${amount}}"
+        val value = s"""{"user_id":"${user_id}","order_id":"${order_id}","categroy_id":"${categroy_id}","product_id":"${product_id}","product_num":"${product_num}","amount":"${amount}"}"""
+//        System.err.println(value)
         producer.send(new ProducerRecord[String, String]("user_order", value), new ProducerCallback())
-        Thread.sleep(Random.nextInt(250))
+        Thread.sleep(Random.nextInt(50))
+//        Thread.sleep(250 * 4)
       }
     } catch {
       case ex: Exception => {
